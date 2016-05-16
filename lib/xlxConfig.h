@@ -72,6 +72,7 @@ enum SCT_STATE {
 typedef struct //176 bits due to padding
 {
 	SCT_STATE state : 4;	//row state
+	bool repeat		: 1;	//repeat alarm or no
 	DevStatus_t color;		//color settings to change to (160 bits)
 	UC indBrightness : 8;	//brightness indicator
 
