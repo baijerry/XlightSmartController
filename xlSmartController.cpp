@@ -399,19 +399,30 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 {
   // ToDo: parse JSON string and execute command
 
-  // ToDo: if command is change schedule, add/delete entry in schedule, set m_isSCTChanged true
+  // ToDo: if command is change schedule, create ScheduleTable instance from data, pass into
+  // UpdateSCT(), set m_isSCTChanged true
+  // If cannot add schedule table row, send notif "max number of alarms reached"
+  // 
   
 	
   return 0;
 }
 
 //------------------------------------------------------------------
-// Set New Alarms and Timers
+// Edit Schedule Table, Set New Alarms
 //------------------------------------------------------------------
-void SmartControllerClass::AlarmTimerTriggered(int SCTindex) 
+bool SmartControllerClass::UpdateSCT(ScheduleTable row) {
+	//ToDo: add declaration to header file
+	//If delete, find row to delete by comparing rows
+	//If add, find next avalible row in schedual_table. 
+			//If none, return false
+			//If empty row exists, add the new row, return true
+}
+
+void SmartControllerClass::AlarmTimerTriggered(int SCTindex)
 {
-  //ToDo: read schedule table entry for metadata
-  
-  //ToDo: impliment alarm sound/message using metadata
-  //...
+	//ToDo: read schedule table entry for metadata
+
+	//ToDo: impliment alarm sound/message using metadata
+	//...
 }

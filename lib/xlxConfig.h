@@ -60,6 +60,26 @@ typedef struct
 } DevStatus_t;
 
 //------------------------------------------------------------------
+// Xlight Schedule Data Structures
+//------------------------------------------------------------------
+enum SCT_STATE {
+	SCTempty = 0, //row empty
+	SCTnew,		  //new row
+	SCTdelete,    //delete row
+	SCTactive	  //active row
+};  
+
+typedef struct //176 bits due to padding
+{
+	SCT_STATE state : 4;	//row state
+	DevStatus_t color;		//color settings to change to (160 bits)
+	UC indBrightness : 8;	//brightness indicator
+
+} ScheduleTable;
+
+ScheduleTable schedual_table[MAX_SCT_ENTRY]; //create only instance
+
+//------------------------------------------------------------------
 // Xlight Configuration Class
 //------------------------------------------------------------------
 class ConfigClass

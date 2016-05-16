@@ -114,7 +114,7 @@ BOOL ConfigClass::LoadConfig()
   // ToDo: load Schedule
   if( EEPROM.length() >= MEM_SCHEDULE_OFFSET + MEM_SCHEDULE_LEN )
   {
-    //...
+    //ToDo: load data into schedule table structure 
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table loaded.");
