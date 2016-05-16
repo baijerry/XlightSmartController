@@ -51,6 +51,9 @@ public:
   int CldSetTimeZone(String tzStr);
   int CldPowerSwitch(String swStr);
   int CldJSONCommand(String jsonData);
+
+  // Alarms and Timers
+  void AlarmTimerTiggered(int SCTindex); 
 };
 
 //------------------------------------------------------------------
