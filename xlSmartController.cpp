@@ -397,26 +397,47 @@ int SmartControllerClass::CldPowerSwitch(String swStr)
 
 int SmartControllerClass::CldJSONCommand(String jsonData)
 {
-  // ToDo: parse JSON string and execute command
+  // ToDo: parse JSON string and execute commands
+	
 
-  // ToDo: if command is change schedule, create ScheduleTable instance from data, pass into
-  // UpdateSCT(), set m_isSCTChanged true
-  // If cannot add schedule table row, send notif "max number of alarms reached"
-  // 
-  
+  //If command is "update schedule table" do this:
+  if (1) 
+  {
+	//Parse JSON and give value to these variables:
+	SCT_STATE state = ;
+	BOOL isRepeat = ;
+	BOOL isEnabled = ;
+	DevStatus_t color = ;
+	UC day = ;
+	UC hour = ;
+	UC min = ;
+	UC sec = 0; //default value
+
+	//create ScheduleTable instance from data
+	ScheduleTable row = {state, isRepeat, isEnabled, color, day, hour, min, sec};
+
+	if (theConfig.UpdateSCT(row)) //try updating Schedule Table
+	{
+		//success
+		//ToD: Success message
+	}
+	else
+	{
+		//fail
+		//ToDo: Error message "Max number of alarms reached"
+	}
+
+  }
 	
   return 0;
 }
 
 //------------------------------------------------------------------
-// Edit Schedule Table, Set New Alarms
+// Alarm Actions
 //------------------------------------------------------------------
-bool SmartControllerClass::UpdateSCT(ScheduleTable row) {
-	//ToDo: add declaration to header file
-	//If delete, find row to delete by comparing rows
-	//If add, find next avalible row in schedual_table. 
-			//If none, return false
-			//If empty row exists, add the new row, return true
+void SmartControllerClass::UpdateAlarms(int action, BOOL isRepeat, UC day, UC hour, UC min, UC sec , BOOL isEnabled ){
+  //Default: isEnabled = 0
+  
 }
 
 void SmartControllerClass::AlarmTimerTriggered(int SCTindex)
@@ -424,5 +445,8 @@ void SmartControllerClass::AlarmTimerTriggered(int SCTindex)
 	//ToDo: read schedule table entry for metadata
 
 	//ToDo: impliment alarm sound/message using metadata
-	//...
+	//-set color of rings (hue and brightness)
+	//-set brightness indicator
+	
+	//if alarm repeat tag is false, delete row in SCT
 }

@@ -371,3 +371,50 @@ BOOL ConfigClass::SetNumDevices(UC num)
   }
   return false;
 }
+
+BOOL ConfigClass::UpdateSCT(ScheduleTable row) 
+{
+  if (row.state == SCTnew) //add a row
+  {
+	int tableIndex = 0;
+	bool emptyRowFlag = false;
+	
+	while (tableIndex < MAX_SCT_ENTRY) //find first empty row of table
+	{
+	  if (schedule_table[tableIndex].state == SCTempty) 
+	  {
+		emptyRowFlag = true;
+		break;
+	  }
+	  tableIndex++;
+	}
+	
+	if (emptyRowFlag) //if empty row exists, insert new row
+	{
+	  schedule_table[tableIndex] = row;
+
+	  m_isSCTChanged = true;
+	  return true;
+	}
+	else //no empty row
+	{
+	  return false;
+	}
+
+  }
+  else if (row.state == SCTdelete) //delete a row
+  {
+	//ToDo: find index of Schedule Table to delete. If can't find it, log error and return false.
+	  int tableIndex = ;
+
+	schedule_table[tableIndex].state == SCTdelete;
+	m_isSCTChanged = true;
+	return true;
+  }
+  else
+  {
+	LOGW(LOGTAG_MSG, "Incorrect UpdateSCT row parameter");
+	return false;
+  }
+
+}

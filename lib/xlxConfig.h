@@ -1,4 +1,3 @@
-//  xlxConfig.h - Xlight Configuration Reader & Writer
 
 #ifndef xlxConfig_h
 #define xlxConfig_h
@@ -69,16 +68,18 @@ enum SCT_STATE {
 	SCTactive	  //active row
 };  
 
-typedef struct //176 bits due to padding
+typedef struct //Schedule Table: 25 bytes due to padding
 {
-	SCT_STATE state : 4;	//row state
-	bool repeat		: 1;	//repeat alarm or no
-	DevStatus_t color;		//color settings to change to (160 bits)
-	UC indBrightness : 8;	//brightness indicator
-
+	SCT_STATE state		: 2;            //values: 0-3
+	BOOL isRepeat		: 1;
+	BOOL isEnabled		: 1;
+	DevStatus_t color;	//160 bits
+	UC day				: 3;            //values: 1-7
+	UC hour				: 5;            //values: 0-23
+	UC min				: 6;			//values: 0-59
+	UC sec				: 6;			//values: 0-59
+	UC indBrightness	: 8;
 } ScheduleTable;
-
-ScheduleTable schedual_table[MAX_SCT_ENTRY]; //create only instance
 
 //------------------------------------------------------------------
 // Xlight Configuration Class
@@ -90,7 +91,9 @@ private:
   BOOL m_isChanged;         // Config Change Flag
   BOOL m_isDSTChanged;      // Device Status Table Change Flag
   BOOL m_isSCTChanged;      // Schedule Table Change Flag
-  Config_t m_config;
+  Config_t m_config;		
+  
+  ScheduleTable schedule_table[MAX_SCT_ENTRY]; // Schedule Table
 
 public:
   ConfigClass();
@@ -102,6 +105,7 @@ public:
   BOOL IsConfigChanged();
   BOOL IsDSTChanged();
   BOOL IsSCTChanged();
+  BOOL UpdateSCT(ScheduleTable row);
 
   UC GetVersion();
   BOOL SetVersion(UC ver);
