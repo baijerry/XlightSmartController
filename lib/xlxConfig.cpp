@@ -35,7 +35,7 @@
 
 #include "xlxConfig.h"
 #include "xlxLogger.h"
-#include "xliMemoryMap.h"
+//#include "xliMemoryMap.h" //moved to header
 #include "xlSmartController.h"
 
 // the one and only instance of ConfigClass
@@ -144,10 +144,31 @@ BOOL ConfigClass::SaveConfig()
 
   if( m_isSCTChanged )
   {
-	//ToDo: Read SCT table, add/delete changed alarm/timer entries
-	
-	//ToDo: create new alarms/timers (tie to SmartControllerClass::AlarmTimerTriggered() function)
-	//ToDo: create updateAlarm() func with param of only info to be used to create the alarm/timer
+	//Read SCT table, add/delete changed alarm/timer entries
+	for (int index = 0; index < MAX_SCT_ENTRY; index++)
+	{
+	  if (schedule_table[index].state == SCTnew)
+	  {
+	    //create new alarm
+		theSys.UpdateAlarms(NEW_ALARM, 
+							schedule_table[index].isRepeat, 
+							schedule_table[index].day,
+							schedule_table[index].hour,
+							schedule_table[index].min,
+							schedule_table[index].sec);
+	  }
+	  
+	  if (schedule_table[index].state == SCTdelete)
+	  {
+		//delete alarm
+		theSys.UpdateAlarms(DEL_ALARM,
+							schedule_table[index].isRepeat,
+							schedule_table[index].day,
+							schedule_table[index].hour,
+							schedule_table[index].min,
+							schedule_table[index].sec);
+	  }
+	}
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table saved.");
@@ -404,16 +425,36 @@ BOOL ConfigClass::UpdateSCT(ScheduleTable row)
   }
   else if (row.state == SCTdelete) //delete a row
   {
-	//ToDo: find index of Schedule Table to delete. If can't find it, log error and return false.
-	  int tableIndex = ;
+	int tableIndex = 0;
+	bool matchingRowFlag = false;
 
-	schedule_table[tableIndex].state == SCTdelete;
-	m_isSCTChanged = true;
-	return true;
+	while (tableIndex < MAX_SCT_ENTRY) { //find row in Schedule Table to delete
+	  if (schedule_table[tableIndex].day == row.day && schedule_table[tableIndex].hour == row.hour
+													&& schedule_table[tableIndex].min == row.min
+													&& schedule_table[tableIndex].sec == row.sec)
+	  {
+	    matchingRowFlag = true;
+	    break;
+	  }
+	  tableIndex++;
+	}
+
+	if (matchingRowFlag)
+	{
+	  schedule_table[tableIndex].state == SCTdelete; //toggle flag to delete
+	  m_isSCTChanged = true;
+	  return true;
+	}
+	else
+	{
+	  LOGW(LOGTAG_MSG, "Alarm to delete not found");
+	  return false;
+	}
+
   }
   else
   {
-	LOGW(LOGTAG_MSG, "Incorrect UpdateSCT row parameter");
+	LOGW(LOGTAG_MSG, "Incorrect UpdateSCT row state");
 	return false;
   }
 

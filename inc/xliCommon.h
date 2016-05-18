@@ -57,8 +57,9 @@
 #define COMMAND_JSON_SIZE         64
 #define SENSORDATA_JSON_SIZE      196
 
-// Maximun number of entries in Schedule Table (SCT max length: 256 bytes)
-#define MAX_SCT_ENTRY			  10
+// Alarm Updates
+#define NEW_ALARM			  0
+#define DEL_ALARM			  1
 
 // Sensor list: maximun 16 sensors
 typedef enum

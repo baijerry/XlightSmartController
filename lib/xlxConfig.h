@@ -3,6 +3,7 @@
 #define xlxConfig_h
 
 #include "xliCommon.h"
+#include "xliMemoryMap.h"
 
 // Change it only if Config_t structure is updated
 #define VERSION_CONFIG_DATA   1
@@ -18,28 +19,28 @@
 //------------------------------------------------------------------
 typedef struct
 {
-  US id                       :2;           // timezone id
-  SHORT offset                :2;           // offser in minutes
-  UC dst                      :1;           // daylight saving time flag
+  US id                       :16;           // timezone id
+  SHORT offset                :16;           // offser in minutes
+  UC dst                      :8;           // daylight saving time flag
 } Timezone_t;
 
 typedef struct
 {
-  UC State                    :1;           // Component state
-  UC CW                       :1;           // Brightness of cold white
-  UC WW                       :1;           // Brightness of warm white
-  UC R                        :1;           // Brightness of red
-  UC G                        :1;           // Brightness of green
-  UC B                        :1;           // Brightness of blue
+  UC State                    :8;           // Component state
+  UC CW                       :8;           // Brightness of cold white
+  UC WW                       :8;           // Brightness of warm white
+  UC R                        :8;           // Brightness of red
+  UC G                        :8;           // Brightness of green
+  UC B                        :8;           // Brightness of blue
 } Hue_t;
 
 typedef struct
 {
-  UC version                  :1;           // Data version, other than 0xFF
-  US sensorBitmap             :2;           // Sensor enable bitmap
-  UC indBrightness            :1;           // Indicator of brightness
-  UC typeMainDevice           :1;           // Type of the main lamp
-  UC numDevices               :1;           // Number of devices
+  UC version                  :8;           // Data version, other than 0xFF
+  US sensorBitmap             :16;           // Sensor enable bitmap
+  UC indBrightness            :8;           // Indicator of brightness
+  UC typeMainDevice           :8;           // Type of the main lamp
+  UC numDevices               :8;           // Number of devices
   Timezone_t timeZone;                      // Time zone
   char Organization[24];                    // Organization name
   char ProductName[24];                     // Product name
@@ -51,8 +52,8 @@ typedef struct
 //------------------------------------------------------------------
 typedef struct
 {
-  UC id                       :1;           // ID, 1 based
-  UC type                     :1;           // Type of lamp
+  UC id                       :8;           // ID, 1 based
+  UC type                     :8;           // Type of lamp
   Hue_t ring1;
   Hue_t ring2;
   Hue_t ring3;
@@ -61,6 +62,7 @@ typedef struct
 //------------------------------------------------------------------
 // Xlight Schedule Data Structures
 //------------------------------------------------------------------
+
 enum SCT_STATE {
 	SCTempty = 0, //row empty
 	SCTnew,		  //new row
@@ -72,14 +74,21 @@ typedef struct //Schedule Table: 25 bytes due to padding
 {
 	SCT_STATE state		: 2;            //values: 0-3
 	BOOL isRepeat		: 1;
-	BOOL isEnabled		: 1;
-	DevStatus_t color;	//160 bits
+	//BOOL isEnabled		: 1;
+	UC deviceID			: 8;
+	UC actionID			: 8;
+	Hue_t ring1;		//48 bits 
+	Hue_t ring2;		//48 bits 
+	Hue_t ring3;		//48 bits 
 	UC day				: 3;            //values: 1-7
 	UC hour				: 5;            //values: 0-23
 	UC min				: 6;			//values: 0-59
 	UC sec				: 6;			//values: 0-59
 	UC indBrightness	: 8;
 } ScheduleTable;
+
+// Maximun number of entries in Schedule Table (SCT max length: 256 bytes)
+#define MAX_SCT_ENTRY			  (int)(256/sizeof(ScheduleTable))
 
 //------------------------------------------------------------------
 // Xlight Configuration Class

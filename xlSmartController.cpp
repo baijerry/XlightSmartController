@@ -407,27 +407,31 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
   //If command is "update schedule table" do this:
   if (1) 
   {
+	//ToDo:
 	//Parse JSON and give value to these variables:
 	SCT_STATE state = ;
 	BOOL isRepeat = ;
-	BOOL isEnabled = ;
-	DevStatus_t color = ;
+	//BOOL isEnabled = ;
+	UC deviceID = ;
+	UC actionID = ;
+	Hue_t ring1 = ;
+	Hue_t ring2 = ; 
+	Hue_t ring3 = ;
 	UC day = ;
 	UC hour = ;
 	UC min = ;
 	UC sec = 0; //default value
+	UC indBrightness = ;
 
 	//create ScheduleTable instance from data
-	ScheduleTable row = {state, isRepeat, isEnabled, color, day, hour, min, sec};
+	ScheduleTable row = {state, isRepeat, deviceID, actionID, ring1, ring2, ring3, day, hour, min, sec, indBrightness};
 
 	if (theConfig.UpdateSCT(row)) //try updating Schedule Table
-	{
-		//success
+	{ //success
 		//ToD: Success message
 	}
 	else
-	{
-		//fail
+	{ //fail
 		//ToDo: Error message "Max number of alarms reached"
 	}
 
@@ -439,8 +443,10 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 //------------------------------------------------------------------
 // Alarm Actions
 //------------------------------------------------------------------
-void SmartControllerClass::UpdateAlarms(int action, BOOL isRepeat, UC day, UC hour, UC min, UC sec , BOOL isEnabled ){
-  //Default: isEnabled = 0
+void SmartControllerClass::UpdateAlarms(int action, BOOL isRepeat, UC day, UC hour, UC min, UC sec){
+  //if action = 0 (NEW_ALARM) then
+
+  //if action = 1 (DEL_ALARM) then
   
 }
 
