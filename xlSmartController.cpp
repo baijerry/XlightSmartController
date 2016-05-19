@@ -482,7 +482,7 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 //------------------------------------------------------------------
 // Alarm Actions
 //------------------------------------------------------------------
-void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId & alarm_id){
+void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId alarm_id){
   //ToDo: error checking? Change return type to bool, catch false in SaveConfig()
 
   const timeDayOfWeek_t _day = day;
@@ -496,11 +496,11 @@ void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC
 	{
 	  if (_day >= 1 && _day <= 7) //repeat weekly
 	  {
-	    alarm_id = Alarm.alarmRepeat(_day, _hour, _min, _sec, AlarmTimerTriggered);
+	    theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_day, _hour, _min, _sec, AlarmTimerTriggered);
 	  }
 	  else if (_day == 0) //repeat daily
 	  {
-		alarm_id = Alarm.alarmRepeat(_hour, _min, _sec, AlarmTimerTriggered);
+		theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_hour, _min, _sec, AlarmTimerTriggered);
 	  }
 	  else
 	  {
@@ -510,7 +510,7 @@ void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC
 	}
 	else //single alarm
 	{
-	  alarm_id = Alarm.alarmOnce(_day, _hour, _min, _sec, AlarmTimerTriggered);
+	  theConfig.schedule_table[index].alarm_id = Alarm.alarmOnce(_day, _hour, _min, _sec, AlarmTimerTriggered);
 	}
   }
 

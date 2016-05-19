@@ -57,7 +57,7 @@ public:
   int CldJSONCommand(String jsonData);
 
   // Alarms and Timers
-  void UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId & alarm_id); //creates or deletes alarms
+  void UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId alarm_id); //creates or deletes alarms
 };
 
 //------------------------------------------------------------------

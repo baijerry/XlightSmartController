@@ -160,13 +160,14 @@ BOOL ConfigClass::SaveConfig()
 							schedule_table[index].alarm_id); //alarm_id call by ref
 
 		//change tag to active
-		schedule_table[index].state == SCTactive;
+		schedule_table[index].state = SCTactive;
 	  }
 
 	  if (schedule_table[index].state == SCTdelete)
 	  {
 		//delete alarm
 		theSys.UpdateAlarms(DEL_ALARM,
+							index,
 							schedule_table[index].isRepeat,
 							schedule_table[index].day,
 							schedule_table[index].hour,
@@ -175,7 +176,7 @@ BOOL ConfigClass::SaveConfig()
 							schedule_table[index].alarm_id); //alarm_id call by ref
 
 		//change tag to empty
-		schedule_table[index].state == SCTempty;
+		schedule_table[index].state = SCTempty;
 	  }
 	}
 
