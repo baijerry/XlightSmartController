@@ -41,6 +41,9 @@ SmartControllerClass theSys = SmartControllerClass();
 DHT senDHT(PIN_SEN_DHT, SEN_TYPE_DHT);
 LightSensor senLight(PIN_SEN_LIGHT);
 
+//static method to be the alarm handler
+static void AlarmTimerTriggered();
+
 //------------------------------------------------------------------
 // Smart Controller Class
 //------------------------------------------------------------------
@@ -91,7 +94,7 @@ void SmartControllerClass::InitNetwork()
 {
   // Check WAN and LAN
   CheckNetwork();
-  if( IsWANGood() ) 
+  if( IsWANGood() )
   {
     LOGN(LOGTAG_MSG, "WAN is working.");
     SetStatus(STATUS_NWS);
@@ -209,7 +212,7 @@ BOOL SmartControllerClass::CheckRF()
 
 BOOL SmartControllerClass::CheckNetwork()
 {
-  // ToDo: check WAN, change value of m_isWAN 
+  // ToDo: check WAN, change value of m_isWAN
 
   // ToDo: check LAN, change value of m_isLan
 
@@ -227,7 +230,7 @@ BOOL SmartControllerClass::SelfCheck(UL ms)
 {
   UC tickSaveConfig = 0;
 
-  // Check timers: check state, reset if necessary 
+  // Check timers: check state, reset if necessary
   // ToDo:...
 
   // Check all alarms. This triggers them.
@@ -401,26 +404,26 @@ int SmartControllerClass::CldPowerSwitch(String swStr)
 int SmartControllerClass::CldJSONCommand(String jsonData)
 {
   // ToDo: parse JSON string and execute commands
-	
+
 
   //If command is "update schedule table" do this:
-  if (1) 
+  if (1)
   {
 	//ToDo:
 	//Parse JSON and give value to these variables:
-	SCT_STATE state = ;
-	BOOL isRepeat = ;
+	SCT_STATE state ;
+	BOOL isRepeat ;
 	//BOOL isEnabled = ;
-	UC deviceID = ;
-	UC actionID = ;
-	Hue_t ring1 = ;
-	Hue_t ring2 = ; 
-	Hue_t ring3 = ;
-	UC day = ;
-	UC hour = ;
-	UC min = ;
+	UC deviceID ;
+	UC actionID ;
+	Hue_t ring1 ;
+	Hue_t ring2 ;
+	Hue_t ring3 ;
+	UC day ;
+	UC hour ;
+	UC min ;
 	UC sec = 0; //default value
-	UC indBrightness = ;
+	UC indBrightness ;
 	AlarmId alarm_id = 0; //initialized, no value given yet
 
 	//create ScheduleTable instance from data
@@ -428,15 +431,15 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 
 	if (theConfig.UpdateSCT(row)) //try updating Schedule Table
 	{ //success
-		//ToDo: Success message
+		//ToDo: Success message back to app
 	}
 	else
 	{ //fail
-		//ToDo: Error message "Max number of alarms reached"
+		//ToDo: Error message back to app "Problem adding alarm"
 	}
 
   }
-	
+
   return 0;
 }
 
@@ -446,18 +449,22 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId & alarm_id){
   //ToDo: error checking? Change return type to bool, catch false in SaveConfig()
 
+  const timeDayOfWeek_t _day = day;
+  const int _hour = hour;
+  const int _min = min;
+  const int _sec = sec;
+
   if (action == NEW_ALARM)
   {
 	if (isRepeat) //repeat alarm
 	{
-	  if (day >= 1 && day <= 7) //repeat weekly
+	  if (_day >= 1 && _day <= 7) //repeat weekly
 	  {
-	    alarm_id = Alarm.alarmRepeat(day, hour, min, sec, AlarmTimerTriggered);
-		Alarm.alarmRepeat(1, 1, 1, AlarmTimerTriggered);
+	    alarm_id = Alarm.alarmRepeat(_day, _hour, _min, _sec, AlarmTimerTriggered);
 	  }
-	  else if (day == 0) //repeat daily
+	  else if (_day == 0) //repeat daily
 	  {
-		alarm_id = Alarm.alarmRepeat(hour, min, sec, AlarmTimerTriggered);
+		alarm_id = Alarm.alarmRepeat(_hour, _min, _sec, AlarmTimerTriggered);
 	  }
 	  else
 	  {
@@ -467,10 +474,10 @@ void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC
 	}
 	else //single alarm
 	{
-	  alarm_id = Alarm.alarmOnce(day, hour, min, sec, AlarmTimerTriggered);
+	  alarm_id = Alarm.alarmOnce(_day, _hour, _min, _sec, AlarmTimerTriggered);
 	}
   }
-  
+
   if (action == DEL_ALARM) //disable alarm
   {
 	if (Alarm.isAllocated(alarm_id))
@@ -481,18 +488,46 @@ void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC
 	{
 	  LOGE(LOGTAG_MSG, "Error ould not disable alarm in UpdateAlarms()");
 	}
-		
+
   }
-  
+
 }
 
-void SmartControllerClass::AlarmTimerTriggered()
+static void AlarmTimerTriggered()
 {
-	//ToDo: read schedule table entry for metadata
+	AlarmId triggered_id = Alarm.getTriggeredAlarmId();
 
-	//ToDo: impliment alarm sound/message using metadata
-	//-set color of rings (hue and brightness)
-	//-set brightness indicator
-	
-	//if alarm repeat tag is false, delete row in SCT
+	int SCT_index = 0;
+	bool isAlarmFound = false;
+
+	while (SCT_index < MAX_SCT_ENTRY) //find Schedule Table index of the alarm triggered
+	{
+		if (theConfig.schedule_table[SCT_index].alarm_id == triggered_id)
+		{
+			isAlarmFound = true;
+			break;
+		}
+		SCT_index++;
+	}
+
+	if (!isAlarmFound) //if alarm not found, log error and return 
+	{
+		LOGE(LOGTAG_MSG, "AlarmTimerTriggered() cannot find triggered alarm id in Schedule Table");
+		return;
+	}
+
+	if (theConfig.schedule_table[SCT_index].isRepeat == false) //if alarm doesn't repeat, clear the Schedule Table row 
+	{
+		theConfig.schedule_table[SCT_index].state = SCTempty;
+	}
+
+	//ToDo: Read device, action, and color data from schedule_table[SCT_index]
+
+	//ToDo: Change lighting colors
+
+	//ToDo: Do action based on schedule_table[SCT_index].actionID
+
+	//ToDo: Send JSON back to app
+	//Display message/notif on phone that alarm has been triggered
+	//Disable alarm in app if schedule_table[SCT_index].isRepeat == false
 }

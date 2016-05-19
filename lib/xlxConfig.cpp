@@ -114,7 +114,7 @@ BOOL ConfigClass::LoadConfig()
   // ToDo: load Schedule
   if( EEPROM.length() >= MEM_SCHEDULE_OFFSET + MEM_SCHEDULE_LEN )
   {
-    //ToDo: load data into schedule table structure 
+    //ToDo: load data into schedule table structure
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table loaded.");
@@ -150,9 +150,9 @@ BOOL ConfigClass::SaveConfig()
 	  if (schedule_table[index].state == SCTnew)
 	  {
 	    //create new alarm
-		theSys.UpdateAlarms(NEW_ALARM, 
+		theSys.UpdateAlarms(NEW_ALARM,
 							index,
-							schedule_table[index].isRepeat, 
+							schedule_table[index].isRepeat,
 							schedule_table[index].day,
 							schedule_table[index].hour,
 							schedule_table[index].min,
@@ -162,7 +162,7 @@ BOOL ConfigClass::SaveConfig()
 		//change tag to active
 		schedule_table[index].state == SCTactive;
 	  }
-	  
+
 	  if (schedule_table[index].state == SCTdelete)
 	  {
 		//delete alarm
@@ -178,6 +178,8 @@ BOOL ConfigClass::SaveConfig()
 		schedule_table[index].state == SCTempty;
 	  }
 	}
+
+	//ToDo: write schedule table back into memory
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table saved.");
@@ -402,23 +404,23 @@ BOOL ConfigClass::SetNumDevices(UC num)
   return false;
 }
 
-BOOL ConfigClass::UpdateSCT(ScheduleTable row) 
+BOOL ConfigClass::UpdateSCT(ScheduleTable row)
 {
   if (row.state == SCTnew) //add a row
   {
 	int tableIndex = 0;
 	bool emptyRowFlag = false;
-	
+
 	while (tableIndex < MAX_SCT_ENTRY) //find first empty row of table
 	{
-	  if (schedule_table[tableIndex].state == SCTempty) 
+	  if (schedule_table[tableIndex].state == SCTempty)
 	  {
 		emptyRowFlag = true;
 		break;
 	  }
 	  tableIndex++;
 	}
-	
+
 	if (emptyRowFlag) //if empty row exists, insert new row
 	{
 	  schedule_table[tableIndex] = row;
@@ -438,7 +440,7 @@ BOOL ConfigClass::UpdateSCT(ScheduleTable row)
 	bool matchingRowFlag = false;
 
 	//find row in Schedule Table to delete. Use timestamp for search, not alarm_id because alarm might not be set
-	while (tableIndex < MAX_SCT_ENTRY) { 
+	while (tableIndex < MAX_SCT_ENTRY) {
 	  if (schedule_table[tableIndex].day == row.day && schedule_table[tableIndex].hour == row.hour
 													&& schedule_table[tableIndex].min == row.min
 													&& schedule_table[tableIndex].sec == row.sec)
