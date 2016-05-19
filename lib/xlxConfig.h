@@ -4,6 +4,7 @@
 
 #include "xliCommon.h"
 #include "xliMemoryMap.h"
+#include "TimeAlarms.h"
 
 // Change it only if Config_t structure is updated
 #define VERSION_CONFIG_DATA   1
@@ -75,8 +76,8 @@ typedef struct //Schedule Table: 25 bytes due to padding
 	SCT_STATE state		: 2;            //values: 0-3
 	BOOL isRepeat		: 1;
 	//BOOL isEnabled		: 1;
-	UC deviceID			: 8;
-	UC actionID			: 8;
+	UC deviceID			: 5;			//values: 1-16
+	UC actionID			: 4;			//values: 0-15
 	Hue_t ring1;		//48 bits 
 	Hue_t ring2;		//48 bits 
 	Hue_t ring3;		//48 bits 
@@ -85,6 +86,7 @@ typedef struct //Schedule Table: 25 bytes due to padding
 	UC min				: 6;			//values: 0-59
 	UC sec				: 6;			//values: 0-59
 	UC indBrightness	: 8;
+	AlarmId alarm_id	: 8;
 } ScheduleTable;
 
 // Maximun number of entries in Schedule Table (SCT max length: 256 bytes)

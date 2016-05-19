@@ -151,11 +151,16 @@ BOOL ConfigClass::SaveConfig()
 	  {
 	    //create new alarm
 		theSys.UpdateAlarms(NEW_ALARM, 
+							index,
 							schedule_table[index].isRepeat, 
 							schedule_table[index].day,
 							schedule_table[index].hour,
 							schedule_table[index].min,
-							schedule_table[index].sec);
+							schedule_table[index].sec,
+							schedule_table[index].alarm_id); //alarm_id call by ref
+
+		//change tag to active
+		schedule_table[index].state == SCTactive;
 	  }
 	  
 	  if (schedule_table[index].state == SCTdelete)
@@ -166,7 +171,11 @@ BOOL ConfigClass::SaveConfig()
 							schedule_table[index].day,
 							schedule_table[index].hour,
 							schedule_table[index].min,
-							schedule_table[index].sec);
+							schedule_table[index].sec,
+							schedule_table[index].alarm_id); //alarm_id call by ref
+
+		//change tag to empty
+		schedule_table[index].state == SCTempty;
 	  }
 	}
 
@@ -428,7 +437,8 @@ BOOL ConfigClass::UpdateSCT(ScheduleTable row)
 	int tableIndex = 0;
 	bool matchingRowFlag = false;
 
-	while (tableIndex < MAX_SCT_ENTRY) { //find row in Schedule Table to delete
+	//find row in Schedule Table to delete. Use timestamp for search, not alarm_id because alarm might not be set
+	while (tableIndex < MAX_SCT_ENTRY) { 
 	  if (schedule_table[tableIndex].day == row.day && schedule_table[tableIndex].hour == row.hour
 													&& schedule_table[tableIndex].min == row.min
 													&& schedule_table[tableIndex].sec == row.sec)
@@ -447,14 +457,14 @@ BOOL ConfigClass::UpdateSCT(ScheduleTable row)
 	}
 	else
 	{
-	  LOGW(LOGTAG_MSG, "Alarm to delete not found");
+	  LOGE(LOGTAG_MSG, "Alarm to delete not found");
 	  return false;
 	}
 
   }
   else
   {
-	LOGW(LOGTAG_MSG, "Incorrect UpdateSCT row state");
+	LOGE(LOGTAG_MSG, "Incorrect UpdateSCT row state");
 	return false;
   }
 

@@ -31,7 +31,6 @@
 #include "Adafruit_DHT.h"
 #include "ArduinoJson.h"
 #include "LightSensor.h"
-#include "TimeAlarms.h"
 
 //------------------------------------------------------------------
 // Global Data Structures & Variables
@@ -422,13 +421,14 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 	UC min = ;
 	UC sec = 0; //default value
 	UC indBrightness = ;
+	AlarmId alarm_id = 0; //initialized, no value given yet
 
 	//create ScheduleTable instance from data
-	ScheduleTable row = {state, isRepeat, deviceID, actionID, ring1, ring2, ring3, day, hour, min, sec, indBrightness};
+	ScheduleTable row = {state, isRepeat, deviceID, actionID, ring1, ring2, ring3, day, hour, min, sec, indBrightness, alarm_id};
 
 	if (theConfig.UpdateSCT(row)) //try updating Schedule Table
 	{ //success
-		//ToD: Success message
+		//ToDo: Success message
 	}
 	else
 	{ //fail
@@ -443,14 +443,50 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
 //------------------------------------------------------------------
 // Alarm Actions
 //------------------------------------------------------------------
-void SmartControllerClass::UpdateAlarms(int action, BOOL isRepeat, UC day, UC hour, UC min, UC sec){
-  //if action = 0 (NEW_ALARM) then
+void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId & alarm_id){
+  //ToDo: error checking? Change return type to bool, catch false in SaveConfig()
 
-  //if action = 1 (DEL_ALARM) then
+  if (action == NEW_ALARM)
+  {
+	if (isRepeat) //repeat alarm
+	{
+	  if (day >= 1 && day <= 7) //repeat weekly
+	  {
+	    alarm_id = Alarm.alarmRepeat(day, hour, min, sec, AlarmTimerTriggered);
+		Alarm.alarmRepeat(1, 1, 1, AlarmTimerTriggered);
+	  }
+	  else if (day == 0) //repeat daily
+	  {
+		alarm_id = Alarm.alarmRepeat(hour, min, sec, AlarmTimerTriggered);
+	  }
+	  else
+	  {
+		LOGE(LOGTAG_MSG, "UpdateAlarm() day parameter invalid");
+	  }
+
+	}
+	else //single alarm
+	{
+	  alarm_id = Alarm.alarmOnce(day, hour, min, sec, AlarmTimerTriggered);
+	}
+  }
+  
+  if (action == DEL_ALARM) //disable alarm
+  {
+	if (Alarm.isAllocated(alarm_id))
+	{
+	  Alarm.free(alarm_id);
+	}
+	else
+	{
+	  LOGE(LOGTAG_MSG, "Error ould not disable alarm in UpdateAlarms()");
+	}
+		
+  }
   
 }
 
-void SmartControllerClass::AlarmTimerTriggered(int SCTindex)
+void SmartControllerClass::AlarmTimerTriggered()
 {
 	//ToDo: read schedule table entry for metadata
 
