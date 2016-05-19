@@ -35,7 +35,6 @@
 
 #include "xlxConfig.h"
 #include "xlxLogger.h"
-//#include "xliMemoryMap.h" //moved to header
 #include "xlSmartController.h"
 
 // the one and only instance of ConfigClass
@@ -157,7 +156,7 @@ BOOL ConfigClass::SaveConfig()
 							schedule_table[index].hour,
 							schedule_table[index].min,
 							schedule_table[index].sec,
-							schedule_table[index].alarm_id); //alarm_id call by ref
+							schedule_table[index].alarm_id);
 
 		//change tag to active
 		schedule_table[index].state = SCTactive;
@@ -173,7 +172,7 @@ BOOL ConfigClass::SaveConfig()
 							schedule_table[index].hour,
 							schedule_table[index].min,
 							schedule_table[index].sec,
-							schedule_table[index].alarm_id); //alarm_id call by ref
+							schedule_table[index].alarm_id);
 
 		//change tag to empty
 		schedule_table[index].state = SCTempty;

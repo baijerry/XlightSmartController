@@ -74,17 +74,17 @@ enum SCT_STATE {
 typedef struct //Schedule Table: 25 bytes due to padding
 {
 	SCT_STATE state		: 2;            //values: 0-3
-	BOOL isRepeat		: 1;
+	BOOL isRepeat	   	: 1;
 	//BOOL isEnabled		: 1;
-	UC deviceID			: 5;			//values: 1-16
-	UC actionID			: 4;			//values: 0-15
+	UC deviceID			  : 5;         		//values: 1-16
+	UC actionID		   	: 4;         		//values: 0-15
 	Hue_t ring1;		//48 bits
 	Hue_t ring2;		//48 bits
 	Hue_t ring3;		//48 bits
-	UC day				: 3;            //values: 1-7
-	UC hour				: 5;            //values: 0-23
-	UC min				: 6;			//values: 0-59
-	UC sec				: 6;			//values: 0-59
+	UC day				    : 3;            //values: 1-7
+	UC hour				    : 5;            //values: 0-23
+	UC min				    : 6;           	//values: 0-59
+	UC sec				    : 6;			      //values: 0-59
 	UC indBrightness	: 8;
 	AlarmId alarm_id	: 8;
 } ScheduleTable;
