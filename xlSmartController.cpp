@@ -30,7 +30,12 @@
 
 #include "Adafruit_DHT.h"
 #include "ArduinoJson.h"
+#include "LedLevelBar.h"
 #include "LightSensor.h"
+
+
+#include "MotionSensor.h"
+#include "TimeAlarms.h"
 
 //------------------------------------------------------------------
 // Global Data Structures & Variables
@@ -43,6 +48,11 @@ LightSensor senLight(PIN_SEN_LIGHT);
 
 //static method to be the alarm handler
 static void AlarmTimerTriggered();
+
+LedLevelBar indicatorBrightness(ledLBarProgress, 3);
+
+MotionSensor senMotion(PIN_SEN_PIR);
+
 
 //------------------------------------------------------------------
 // Smart Controller Class
@@ -131,19 +141,22 @@ void SmartControllerClass::InitPins()
   pinMode(PIN_ANA_WKP, INPUT);
 
   // Set Sensors pin Mode
+  //pinModes are already defined in the ::begin() method of each sensor library, may need to be ommitted from here
   pinMode(PIN_SEN_DHT, INPUT);
   pinMode(PIN_SEN_LIGHT, INPUT);
   pinMode(PIN_SEN_MIC, INPUT);
   pinMode(PIN_SEN_PIR, INPUT);
 #endif
 
+  // Brightness level indicator to LS138
+  pinMode(PIN_LED_LEVEL_B0, OUTPUT);
+  pinMode(PIN_LED_LEVEL_B1, OUTPUT);
+  pinMode(PIN_LED_LEVEL_B2, OUTPUT);
+
   // Set communication pin mode
   pinMode(PIN_BLE_RX, INPUT);
   pinMode(PIN_BLE_TX, OUTPUT);
-  pinMode(PIN_EXT_SPI_MOSI, OUTPUT);
   pinMode(PIN_EXT_SPI_MISO, INPUT);
-  pinMode(PIN_EXT_SPI_STCP, INPUT);
-  pinMode(PIN_EXT_SPI_CS, OUTPUT);
   pinMode(PIN_RF_CHIPSELECT, OUTPUT);
   pinMode(PIN_RF_RESET, OUTPUT);
   pinMode(PIN_RF_EOFFLAG, INPUT);
@@ -163,6 +176,20 @@ void SmartControllerClass::InitSensors()
     senLight.begin(SEN_LIGHT_MIN, SEN_LIGHT_MAX);
     LOGD(LOGTAG_MSG, "Light sensor works.");
   }
+
+
+  // Brightness indicator
+  indicatorBrightness.configPin(0, PIN_LED_LEVEL_B0);
+  indicatorBrightness.configPin(1, PIN_LED_LEVEL_B1);
+  indicatorBrightness.configPin(2, PIN_LED_LEVEL_B2);
+  indicatorBrightness.setLevel(theConfig.GetBrightIndicator());
+
+  //PIR
+  if( theConfig.IsSensorEnabled(sensorPIR) ) {
+    senMotion.begin();
+    LOGD(LOGTAG_MSG, "Motion sensor works.");
+  }
+
 
   // ToDo:
   //...
@@ -328,12 +355,12 @@ void SmartControllerClass::CollectData(UC tick)
 
   // Read from ALS
   if( blnReadALS ) {
-    UpdateBrigntness(senLight.getLevel());
+    UpdateBrightness(senLight.getLevel());
   }
 
   // Motion detection
   if( blnReadPIR ) {
-    // ToDo:...
+	  UpdateMotion(senMotion.getMotion());
   }
 
   // Update json data and publish on to the cloud
@@ -358,6 +385,15 @@ int SmartControllerClass::DevSoftSwitch(BOOL sw, UC dev)
   //SetStatus();
 
   return 0;
+}
+
+// High speed system timer process
+void SmartControllerClass::FastProcess()
+{
+  // Refresh LED brightness indicator
+  indicatorBrightness.refreshLevelBar();
+
+  // ToDo:
 }
 
 //------------------------------------------------------------------

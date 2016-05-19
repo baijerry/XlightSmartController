@@ -20,14 +20,24 @@
 //------------------------------------------------------------------
 typedef struct
 {
+<<<<<<< HEAD
   US id                       :16;           // timezone id
   SHORT offset                :16;           // offser in minutes
   UC dst                      :8;           // daylight saving time flag
+=======
+  US id;                                    // timezone id
+  SHORT offset;                             // offser in minutes
+  UC dst                      :1;           // daylight saving time flag
+>>>>>>> upstream/master
 } Timezone_t;
 
 typedef struct
 {
+<<<<<<< HEAD
   UC State                    :8;           // Component state
+=======
+  UC State                    :4;           // Component state
+>>>>>>> upstream/master
   UC CW                       :8;           // Brightness of cold white
   UC WW                       :8;           // Brightness of warm white
   UC R                        :8;           // Brightness of red
@@ -37,9 +47,15 @@ typedef struct
 
 typedef struct
 {
+<<<<<<< HEAD
   UC version                  :8;           // Data version, other than 0xFF
   US sensorBitmap             :16;           // Sensor enable bitmap
   UC indBrightness            :8;           // Indicator of brightness
+=======
+  UC version                  :4;           // Data version, other than 0xFF
+  US sensorBitmap             :16;          // Sensor enable bitmap
+  UC indBrightness            :4;           // Indicator of brightness
+>>>>>>> upstream/master
   UC typeMainDevice           :8;           // Type of the main lamp
   UC numDevices               :8;           // Number of devices
   Timezone_t timeZone;                      // Time zone
@@ -53,8 +69,8 @@ typedef struct
 //------------------------------------------------------------------
 typedef struct
 {
-  UC id                       :8;           // ID, 1 based
-  UC type                     :8;           // Type of lamp
+  UC id;                                    // ID, 1 based
+  UC type;                                  // Type of lamp
   Hue_t ring1;
   Hue_t ring2;
   Hue_t ring3;
