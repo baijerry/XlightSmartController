@@ -207,7 +207,9 @@ void SmartControllerClass::InitCloudObj()
 // Get the controller started
 BOOL SmartControllerClass::Start()
 {
-  // ToDo:
+  // ToDo: 
+	//notif system online
+	//switch system to working status
 
   #ifdef USE_PARTICLE_CLOUD
 	//timer to sync time with cloud every day at 4am (arbitrary)
@@ -268,9 +270,6 @@ BOOL SmartControllerClass::CheckBLE()
 BOOL SmartControllerClass::SelfCheck(UL ms)
 {
   UC tickSaveConfig = 0;
-
-  // Check timers: check state, reset if necessary
-  // ToDo:...
 
   // Check all alarms. This triggers them.
   Alarm.delay(ms);
@@ -454,7 +453,7 @@ int SmartControllerClass::CldJSONCommand(String jsonData)
   // ToDo: parse JSON string and execute commands
 
 
-  //If command is "update schedule table" do this:
+  //If command is "update alarms" do this:
   if (1)
   {
 	//ToDo:
