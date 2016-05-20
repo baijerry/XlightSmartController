@@ -113,7 +113,9 @@ BOOL ConfigClass::LoadConfig()
   // ToDo: load Schedule
   if( EEPROM.length() >= MEM_SCHEDULE_OFFSET + MEM_SCHEDULE_LEN )
   {
-    //ToDo: load data into schedule table structure
+    //Load data from flash into schedule table structure
+	//firmware (factory settings) will need to ensure the "state" values are all 0 in the schedule table
+	EEPROM.get(MEM_CONFIG_OFFSET, m_config);
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table loaded.");
@@ -179,7 +181,8 @@ BOOL ConfigClass::SaveConfig()
 	  }
 	}
 
-	//ToDo: write schedule table back into memory
+	//Write schedule table back into flash memory
+	EEPROM.put(MEM_SCHEDULE_OFFSET, schedule_table);
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table saved.");

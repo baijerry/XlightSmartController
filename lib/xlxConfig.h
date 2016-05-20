@@ -15,6 +15,10 @@
 #define XLA_AUTHORIZATION         "use-token-auth"
 #define XLA_TOKEN                 "your-access-token"       // Can update online
 
+// Alarm Actions
+#define NEW_ALARM			  0
+#define DEL_ALARM			  1
+
 //------------------------------------------------------------------
 // Xlight Configuration Data Structures
 //------------------------------------------------------------------

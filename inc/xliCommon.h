@@ -57,10 +57,6 @@
 #define COMMAND_JSON_SIZE         64
 #define SENSORDATA_JSON_SIZE      196
 
-// Alarm Updates
-#define NEW_ALARM			  0
-#define DEL_ALARM			  1
-
 // Sensor list: maximun 16 sensors
 typedef enum
 {
