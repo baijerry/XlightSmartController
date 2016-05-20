@@ -56,7 +56,7 @@ public:
   int CldJSONCommand(String jsonData);
 
   // Alarms and Timers
-  void AlarmTimerTiggered(int SCTindex); 
+  void AlarmTimerTriggered(int SCTindex);
 };
 
 //------------------------------------------------------------------
