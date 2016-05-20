@@ -43,6 +43,10 @@
 // make an instance for main program
 SmartControllerClass theSys = SmartControllerClass();
 
+#ifdef USE_PARTICLE_CLOUD
+  static void ParticleCloudTimeSync(); //static function for the Particle Cloud daily time sync timer
+#endif
+
 DHT senDHT(PIN_SEN_DHT, SEN_TYPE_DHT);
 LightSensor senLight(PIN_SEN_LIGHT);
 
@@ -209,9 +213,21 @@ BOOL SmartControllerClass::Start()
 {
   // ToDo:
 
+  #ifdef USE_PARTICLE_CLOUD
+	//timer to sync time with cloud every day at 4am (arbitrary)
+	//suggested, since the photon will be running for extended periods of time
+	Alarm.alarmRepeat(4, 0, 0, ParticleCloudTimeSync);
+  #endif
+
   LOGI(LOGTAG_MSG, "SmartController started.");
   return true;
 }
+
+#ifdef USE_PARTICLE_CLOUD
+static void ParticleCloudTimeSync() {
+  Particle.syncTime();
+}
+#endif
 
 String SmartControllerClass::GetSysID()
 {
