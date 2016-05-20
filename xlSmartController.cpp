@@ -33,7 +33,6 @@
 #include "LedLevelBar.h"
 #include "LightSensor.h"
 
-
 #include "MotionSensor.h"
 #include "TimeAlarms.h"
 
@@ -47,16 +46,13 @@ SmartControllerClass theSys = SmartControllerClass();
   static void ParticleCloudTimeSync(); //static function for the Particle Cloud daily time sync timer
 #endif
 
+static void AlarmTimerTriggered(); //static method to be the alarm handler
+
 DHT senDHT(PIN_SEN_DHT, SEN_TYPE_DHT);
 LightSensor senLight(PIN_SEN_LIGHT);
-
-//static method to be the alarm handler
-static void AlarmTimerTriggered();
-
-LedLevelBar indicatorBrightness(ledLBarProgress, 3);
-
 MotionSensor senMotion(PIN_SEN_PIR);
 
+LedLevelBar indicatorBrightness(ledLBarProgress, 3);
 
 //------------------------------------------------------------------
 // Smart Controller Class
@@ -508,26 +504,26 @@ void SmartControllerClass::UpdateAlarms(int action, int index, BOOL isRepeat, UC
 
   if (action == NEW_ALARM)
   {
-	if (isRepeat) //repeat alarm
-	{
-	  if (_day >= 1 && _day <= 7) //repeat weekly
-	  {
-	    theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_day, _hour, _min, _sec, AlarmTimerTriggered);
-	  }
-	  else if (_day == 0) //repeat daily
-	  {
-		theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_hour, _min, _sec, AlarmTimerTriggered);
-	  }
-	  else
-	  {
-		LOGE(LOGTAG_MSG, "UpdateAlarm() day parameter invalid");
-	  }
+	   if (isRepeat) //repeat alarm
+	   {
+	       if (_day >= 1 && _day <= 7) //repeat weekly
+	        {
+	          theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_day, _hour, _min, _sec, AlarmTimerTriggered);
+	        }
+	        else if (_day == 0) //repeat daily
+	        {
+		        theConfig.schedule_table[index].alarm_id = Alarm.alarmRepeat(_hour, _min, _sec, AlarmTimerTriggered);
+	        }
+	        else
+	        {
+		        LOGE(LOGTAG_MSG, "UpdateAlarm() day parameter invalid");
+	        }
 
-	}
-	else //single alarm
-	{
-	  theConfig.schedule_table[index].alarm_id = Alarm.alarmOnce(_day, _hour, _min, _sec, AlarmTimerTriggered);
-	}
+	   }
+	   else //single alarm
+	   {
+         theConfig.schedule_table[index].alarm_id = Alarm.alarmOnce(_day, _hour, _min, _sec, AlarmTimerTriggered);
+	   }
   }
 
   if (action == DEL_ALARM) //disable alarm
@@ -562,13 +558,13 @@ static void AlarmTimerTriggered()
 		SCT_index++;
 	}
 
-	if (!isAlarmFound) //if alarm not found, log error and return 
+	if (!isAlarmFound) //if alarm not found, log error and return
 	{
 		LOGE(LOGTAG_MSG, "AlarmTimerTriggered() cannot find triggered alarm id in Schedule Table");
 		return;
 	}
 
-	if (theConfig.schedule_table[SCT_index].isRepeat == false) //if alarm doesn't repeat, clear the Schedule Table row 
+	if (theConfig.schedule_table[SCT_index].isRepeat == false) //if alarm doesn't repeat, clear the Schedule Table row
 	{
 		theConfig.schedule_table[SCT_index].state = SCTempty;
 	}
