@@ -115,7 +115,7 @@ BOOL ConfigClass::LoadConfig()
   {
     //Load data from flash into schedule table structure
 	//firmware (factory settings) will need to ensure the "state" values are all 0 in the schedule table
-	EEPROM.get(MEM_CONFIG_OFFSET, m_config);
+	EEPROM.get(MEM_SCHEDULE_OFFSET, schedule_table);
 
     m_isSCTChanged = false;
     LOGD(LOGTAG_MSG, "Schedule table loaded.");
