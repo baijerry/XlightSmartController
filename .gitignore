@@ -1,1 +1,6 @@
 *.bin
+*.iobj
+*.ipdb
+*.pdb
+tests/UnitTest/UnitTest/Debug
+tests/UnitTest/UnitTest/Release
