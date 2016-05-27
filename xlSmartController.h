@@ -6,6 +6,7 @@
 #include "xliCommon.h"
 #include "xlxCloudObj.h"
 #include "TimeAlarms.h"
+#include "xlxInterfaceRF24.h"
 
 class SmartControllerClass;           // forward reference
 
@@ -43,6 +44,8 @@ public:
   BOOL IsLANGood();
   BOOL IsWANGood();
 
+  // Process all kinds of commands
+  void ProcessCommands();
   void CollectData(UC tick);
 
   // Device Control Functions
@@ -58,6 +61,11 @@ public:
 
   // Alarms and Timers
   void UpdateAlarms(int action, int index, BOOL isRepeat, UC day, UC hour, UC min, UC sec, AlarmId alarm_id); //creates or deletes alarms
+
+protected:
+  // Communication Interfaces
+  RF24InterfaceClass m_cmRF24;
+
 };
 
 //------------------------------------------------------------------

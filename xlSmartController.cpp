@@ -40,7 +40,7 @@
 // Global Data Structures & Variables
 //------------------------------------------------------------------
 // make an instance for main program
-SmartControllerClass theSys = SmartControllerClass();
+SmartControllerClass theSys;
 
 static void xlSmartControllerTimeSync(); //static function for the Particle Cloud daily time sync timer
 
@@ -303,6 +303,15 @@ BOOL SmartControllerClass::IsLANGood()
 BOOL SmartControllerClass::IsWANGood()
 {
   return m_isWAN;
+}
+
+// Process all kinds of commands
+void SmartControllerClass::ProcessCommands()
+{
+  // Check and process RF2.4 messages
+  m_cmRF24.CheckMessageBuffer();
+
+  // ToDo: process commands from other sources
 }
 
 // Collect data from all enabled sensors

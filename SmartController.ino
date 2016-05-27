@@ -108,7 +108,8 @@ void loop()
 {
   static UC tick = 0;
 
-  // ToDo: process commands
+  // Process commands
+  theSys.ProcessCommands();
 
   // Collect data
   theSys.CollectData(tick++);
