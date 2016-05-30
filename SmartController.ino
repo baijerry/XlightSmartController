@@ -1,3 +1,9 @@
+#define UNIT_TEST_ENABLE //toggle Unit Testing 
+
+#ifdef UNIT_TEST_ENABLE
+  #include "test.ino"
+#else
+
 /**
  * This is the firmware of Xlight SmartController based on Photon/P1 MCU.
  * There are two Protocol Domains:
@@ -121,3 +127,5 @@ void loop()
   // Self-test & alarm trigger, also insert delay between each loop
   theSys.SelfCheck(RTE_DELAY_SELFCHECK);
 }
+
+#endif
