@@ -1396,6 +1396,7 @@ bool SmartControllerClass::CreateAlarm(ListNode<ScheduleRow_t>* scheduleRow, uin
 	scheduleRow->data.alarm_id = alarm_id;
 	LOGI(LOGTAG_MSG, "Alarm %u created via UID:%c%d", alarm_id, CLS_RULE, tag);
 	LOGD(LOGTAG_MSG, "Alarm %u creation info:", alarm_id);
+	LOGD(LOGTAG_MSG, "-----repeat %d", (int)scheduleRow->data.isRepeat);
 	LOGD(LOGTAG_MSG, "-----weekday %d", (int)scheduleRow->data.weekdays);
 	LOGD(LOGTAG_MSG, "-----hour %d", (int)scheduleRow->data.hour);
 	LOGD(LOGTAG_MSG, "-----min %d", (int)scheduleRow->data.minute);
