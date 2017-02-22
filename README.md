@@ -1,1 +1,2 @@
 # XlightSmartController
+Open source project
